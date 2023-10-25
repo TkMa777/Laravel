@@ -7,7 +7,6 @@ import.meta.glob([
 ]);
 
 import { createApp } from "vue";
-
 import Characters from "./components/characters.vue";
 
 const app = createApp({});
