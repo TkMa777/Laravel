@@ -12,6 +12,9 @@ Route::get('/test-api', function () {
     return $response->json();
 });
 
+Route::get('/api/character', [CharactersController::class, 'yourMethodName']);
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
