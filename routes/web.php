@@ -28,6 +28,8 @@ Route::get('/api/character', [CharactersController::class, 'yourMethodName']);
 
 Route::get('/api/character', [CharactersController::class, 'index']);
 Route::get('/api/character-episodes/{character}', [CharactersController::class, 'getCharacterEpisodes']);
+Route::get('/characters/{characterId}/episodes', 'CharactersController@getCharacterEpisodes');
+
 
 
 Route::get('/', [CharactersController::class, 'index'])->name('characters');
