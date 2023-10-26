@@ -12,9 +12,6 @@ Route::get('/test-api', function () {
     return $response->json();
 });
 
-Route::get('/api/character', [CharactersController::class, 'yourMethodName']);
-
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,5 +22,9 @@ Route::get('/api/character', [CharactersController::class, 'yourMethodName']);
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/api/character', [CharactersController::class, 'index']);
+Route::get('/api/character-episodes/{character}', [CharactersController::class, 'getCharacterEpisodes']);
+
 
 Route::get('/', [CharactersController::class, 'index'])->name('characters');

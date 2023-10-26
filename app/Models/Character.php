@@ -10,10 +10,11 @@ class Character extends Model
     use HasFactory;
 
     protected $fillable = [
-        'picture_url', 'last_name', 'first_name', 'species', 'gender', 'status', 'origin', 'episodes'
+        'id', 'name', 'status', 'species', 'type', 'gender', 'origin', 'location', 'image', 'episodes', 'url', 'created'
     ];
 
     protected $casts = [
         'episodes' => 'array',
+        'location' => 'array'
     ];
 }

@@ -1,69 +1,76 @@
 <template>
-    <section>
-        <h1>Personnages</h1>
+    <div>
+        <h1 class="text-2xl font-bold">Liste des personnages féminins de l'espèce humaine</h1>
         <ul>
-            <li v-for="character in characters" :key="character.id" @click="selectCharacter(character)">
-                <img :src="character.image" :alt="character.name">
-                <p>{{ character.name }} {{ character.gender ? character.gender : 'Unknown' }}</p>
+            <li v-for="character in characterList" :key="character.id" class="mb-4 p-4 border rounded-lg">
+                <img :src="character.image" :alt="character.name" class="w-20 h-20 rounded-full object-cover">
+                <p class="text-lg font-semibold">Nom: {{ character.name }}</p>
+                <p class="text-base">Status: {{ character.status }} {{character.id}}</p>
+                <p class="text-base">Last known location: {{ character.location.name }}</p>
+                <button @click="showCharacterEpisodes(character)" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Voir les épisodes</button>
             </li>
-
         </ul>
-        <div v-if="selectedCharacter">
-            <h2>Episodes for {{ selectedCharacter.name }}</h2>
-            <ul>
-                <li v-for="episode in episodes" :key="episode.id">
-                    {{ episode.name }} - {{ episode.episodes }}
-                </li>
-            </ul>
-        </div>
-        <h1 class="text-2xl font-bold">Personnages</h1>
-    </section>
+    </div>
 </template>
+
+
+
+
 <script>
 
 import axios from "axios";
 export default {
-    name: 'Characters',
+    props: {
+        characters: Array
+    },
     data() {
         return {
-            characters: [],
+
+            showEpisodesPopup: false,
             selectedCharacter: null,
-            episodes: []
-        }
+            characterEpisodes: [],
+            characterName: "",
+            characterStatus: "",
+            characterLocation: "",
+            characterList: [],
+
+        };
     },
     methods: {
-        selectCharacter(character) {
-            this.selectedCharacter = character;
-           // this.loadEpisodes(character.episodes);
-            this.loadEpisodes(character.episodes.map(episodeURL => episodeURL.replace('https://rickandmortyapi.com/api/episode/', '')));
-            console.log(character.episodes)
-        },
-        loadEpisodes(episodeURLs) {
-            axios.all(episodeURLs.map(url => axios.get(url)))
-                .then(axios.spread((...responses) => {
-                    this.episodes = responses.map(response => response.data);
-                    console.log('episodes', this.episodes)
-                }))
-                .catch(error => {
-                    console.log('Error loading episodes:', error);
-                });
-        },
+
         loadCharacters() {
             axios.get('https://rickandmortyapi.com/api/character')
                 .then(response => {
-                    this.characters = response.data.results;
-                    console.log("test characters", this.characters)
-                    console.log('test episodes', this.episodes)
+                    this.characterList = response.data.results;
+                    console.log("test characters", this.characterList);
                 })
                 .catch(error => {
                     console.log('Error in loading:', error);
                 });
-        }
+        },
+
+        showCharacterEpisodes(character) {
+            // Выполните запрос к API, чтобы получить серии для выбранного персонажа
+            axios.get(`/api/character-episodes/${character.id}`)
+                .then((response) => {
+                    this.characterEpisodes = response.data;
+                    this.selectedCharacter = character;
+                    this.showEpisodesPopup = true;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        closeEpisodesPopup() {
+            this.showEpisodesPopup = false;
+        },
     },
 
     created() {
         this.loadCharacters();
-
-    }
-}
+    },
+};
 </script>
+
+
+
