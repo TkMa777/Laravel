@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="text-2xl font-bold">Liste des personnages féminins de l'espèce humaine</h1>
+        <h1 class="text-2xl font-bold">Characters</h1>
         <ul>
             <li v-for="character in characterList" :key="character.id" class="mb-4 p-4 border rounded-lg">
                 <img :src="character.image" :alt="character.name" class="w-20 h-20 rounded-full object-cover">
