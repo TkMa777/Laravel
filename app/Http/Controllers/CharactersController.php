@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Character;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-
+use Illuminate\Contracts\View\View;
 
 /*
  * Depuis mon base de données,

@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Location;
 use App\Models\Character;
+use App\Models\Episode;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -33,27 +35,63 @@ class FetchApi extends Command
      *   et créons une boucle dans la base de données pour chaque personnage de l'API.
      */
 
-    public function handle(): void
+    public function __construct()
     {
-        $response = Http::get('https://rickandmortyapi.com/api/character');
+        parent::__construct();
+    }
 
-        if ($response->successful()) {
-            $characters = $response->json()['results'];
+    public function handle()
+    {
+        // Получаем данные о персонажах
+        $characterResponse = Http::get('https://rickandmortyapi.com/api/character');
+        $episodeResponse = Http::get('https://rickandmortyapi.com/api/episode');
+        $locationResponse = Http::get('https://rickandmortyapi.com/api/location');
 
-            foreach ($characters as $character) {
+        if ($characterResponse->successful() && $episodeResponse->successful() && $locationResponse->successful()) {
+            $characterData = $characterResponse->json();
+            $episodeData = $episodeResponse->json();
+            $locationData = $locationResponse->json();
+
+            // Обработка данных о персонажах
+            foreach ($characterData['results'] as $characterData) {
                 Character::create([
-                    'picture_url' => $character['image'],
-                    'last_name' => $character['name'],
-                    'first_name' => $character['name'],
-                    'species' => $character['species'],
-                    'gender' => $character['gender'],
-                    'status' => $character['status'],
-                    'origin' => $character['origin']['name'],
-                    'episodes' => count($character['episode']),
+                    'picture_url' => $characterData['picture_url'],
+                    'last_name' => $characterData['last_name'],
+                    'first_name' => $characterData['first_name'],
+                    'species' => $characterData['species'],
+                    'gender' => $characterData['gender'],
+                    'status' => $characterData['status'],
+                    'origin' => $characterData['origin'],
+                    'episodes' => $characterData['episodes'],
                 ]);
-
-                $this->info('Data fetched and saved successfully.');
             }
+
+            foreach ($episodeData['results'] as $episodeData) {
+                Episode::create([
+                    'id' => $episodeData['id'],
+                    'name' => $episodeData['name'],
+                    'air_date' => $episodeData['air_date'],
+                    'episode' => $episodeData['episode'],
+                    'characters' => json_encode($episodeData['characters']),
+                    'url' => $episodeData['url'],
+                    'created' => $episodeData['created'],
+                ]);
+            }
+
+
+            foreach ($locationData['results'] as $locationData) {
+                Location::create([
+                    'id' => $locationData['id'],
+                    'name' => $locationData['name'],
+                    'type' => $locationData['type'],
+                    'dimension' => $locationData['dimension'],
+                    'residents' => json_encode($locationData['residents']),
+                    'url' => $locationData['url'],
+                    'created' => $locationData['created'],
+                ]);
+            }
+
+            $this->info('Data has been fetched and saved.');
         } else {
             $this->error('Failed to fetch data from the API.');
         }

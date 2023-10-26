@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Episode extends Model
+class Location extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'id',
         'name',
-        'air_date',
-        'episode',
-        'characters',
+        'type',
+        'dimension',
+        'residents',
         'url',
         'created',
     ];

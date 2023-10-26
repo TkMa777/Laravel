@@ -33,11 +33,17 @@ export default {
     },
     methods: {
         selectCharacter(character) {
+            console.log('character.episodes:', character.episodes);
             this.selectedCharacter = character;
-           // this.loadEpisodes(character.episodes);
-            this.loadEpisodes(character.episodes.map(episodeURL => episodeURL.replace('https://rickandmortyapi.com/api/episode/', '')));
-            console.log(character.episodes)
+
+            if (character.episodes) {
+                const episodeURLs = character.episodes.map(episodeURL => episodeURL.replace('https://rickandmortyapi.com/api/episode/', 'https://rickandmortyapi.com/api/episode/'));
+
+                this.loadEpisodes(episodeURLs);
+            }
+
         },
+
         loadEpisodes(episodeURLs) {
             axios.all(episodeURLs.map(url => axios.get(url)))
                 .then(axios.spread((...responses) => {
